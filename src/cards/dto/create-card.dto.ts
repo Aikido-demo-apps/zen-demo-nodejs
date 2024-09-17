@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsDate, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsDate, IsBoolean } from 'class-validator';
 
 export class CreateCardDto {
   @IsString()

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Cards } from './cards.model'; 
+import { Cards } from './cards.model';
 import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class CardsService {
 
   async remove(userId: number, id: string): Promise<void> {
     const tenantId = await this.authService.getFirstTenant(userId);
-    // ok
+    // not vulnerable
     const card = await this.findOne(tenantId, id);
     await card.destroy();
   }

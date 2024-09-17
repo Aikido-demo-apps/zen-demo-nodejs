@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, Logger, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { JwtPayload } from './types';
@@ -19,10 +24,11 @@ export class AuthService {
   }
 
   async getFirstTenant(userId: number): Promise<number> {
-    const findAllTenants = await this.tenantsService.findAllTenantsFromUser(userId);
+    const findAllTenants =
+      await this.tenantsService.findAllTenantsFromUser(userId);
     let tenantId;
 
-    if(findAllTenants.length > 0) {
+    if (findAllTenants.length > 0) {
       tenantId = findAllTenants[0].id;
     }
 
@@ -38,31 +44,33 @@ export class AuthService {
     tenant: Tenant;
     isNewTenant: boolean;
   }> {
+    const username = email_address.split('@')[0];
+    const newUser = await this.usersService.create(
+      email_address,
+      username,
+      password,
+    );
 
-      const username = email_address.split("@")[0]
-      const newUser = await this.usersService.create(email_address, username, password);
+    const newTenant = await this.tenantsService.create(
+      username + "'s Tenant",
+      'free',
+      true,
+      true,
+      newUser.id,
+    );
 
-      const newTenant = await this.tenantsService.create(
-        username + "'s Tenant",
-        'free',
-        true,
-        true,
-        newUser.id,
-      );
+    const payload: JwtPayload = {
+      id: newUser.id,
+      email_address: newUser.email_address,
+      username: newUser.username,
+    };
 
-      const payload: JwtPayload = {
-        id: newUser.id,
-        email_address: newUser.email_address,
-        username: newUser.username,
-      };
-
-      return {
-        access_token: this.jwtService.sign(payload),
-        user: newUser,
-        tenant: newTenant,
-        isNewTenant: true,
-      };
-
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: newUser,
+      tenant: newTenant,
+      isNewTenant: true,
+    };
   }
 
   async authenticateUser(
@@ -78,8 +86,8 @@ export class AuthService {
 
     if (user) {
       if (user?.password !== password) {
-        Logger.log(user?.password)
-        Logger.log(password)
+        Logger.log(user?.password);
+        Logger.log(password);
         throw new UnauthorizedException();
       }
 
@@ -97,7 +105,7 @@ export class AuthService {
         isNewTenant: false,
       };
     }
-    
-    throw new BadRequestException("Unable to find user");
+
+    throw new BadRequestException('Unable to find user');
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { GetUser } from 'src/decorators/user';
 import { JwtPayload } from './types';
@@ -16,7 +16,7 @@ export class AuthController {
   @Public()
   @Get('login')
   login(@Query('email_address') email_address, @Query('password') password) {
-    return this.authService.authenticateUser(email_address, password)
+    return this.authService.authenticateUser(email_address, password);
   }
 
   // Public signup disabled

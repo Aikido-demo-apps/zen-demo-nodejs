@@ -39,7 +39,7 @@ export class TenantsService {
         id: tenantAccess.tenant_id,
       },
     });
-  };
+  }
 
   async findOneById(id: number): Promise<Tenant> {
     return this.tenantModel.findOne({

@@ -17,7 +17,10 @@ import { DocumentsModule } from './documents/documents.module';
     AuthModule,
     SequelizeModule.forRoot({
       dialect: 'postgres',
-      uri: process.env.NODE_ENV === 'production' ? process.env.DATABASE_URL : 'postgresql://root:password@127.0.0.1:27016/main_db',
+      uri:
+        process.env.NODE_ENV === 'production'
+          ? process.env.DATABASE_URL
+          : 'postgresql://root:password@127.0.0.1:27016/main_db',
       models: [User, Tenant, TenantAccess, Cards],
     }),
     UsersModule,
