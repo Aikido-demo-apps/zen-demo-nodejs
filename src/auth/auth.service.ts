@@ -5,7 +5,6 @@ import { JwtPayload } from './types';
 import { User } from 'src/users/user.model';
 import { TenantsService } from 'src/tenants/tenants.service';
 import { Tenant } from 'src/tenants/tenant.model';
-import { find } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +38,6 @@ export class AuthService {
     tenant: Tenant;
     isNewTenant: boolean;
   }> {
-    Logger.error("hi");
     const user = await this.usersService.findOneByEmail(email_address);
 
     if (user) {
