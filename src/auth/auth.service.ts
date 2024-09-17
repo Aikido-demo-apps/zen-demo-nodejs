@@ -61,7 +61,7 @@ export class AuthService {
         isNewTenant: false,
       };
     } else {
-      const username = email_address.split["@"][0]
+      const username = email_address.split("@")[0]
       const newUser = await this.usersService.create(email_address, username);
 
       const newTenant = await this.tenantsService.create(
