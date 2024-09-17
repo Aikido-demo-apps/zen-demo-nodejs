@@ -1,0 +1,1 @@
+psql -f schema.sql -p 5433 -U postgres
