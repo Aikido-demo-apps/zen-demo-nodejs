@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { JwtPayload } from './types';
@@ -27,6 +27,42 @@ export class AuthService {
     }
 
     return tenantId;
+  }
+
+  async registerUser(
+    email_address: string,
+    password: string,
+  ): Promise<{
+    access_token: string;
+    user: User;
+    tenant: Tenant;
+    isNewTenant: boolean;
+  }> {
+
+      const username = email_address.split("@")[0]
+      const newUser = await this.usersService.create(email_address, username, password);
+
+      const newTenant = await this.tenantsService.create(
+        username + "'s Tenant",
+        'free',
+        true,
+        true,
+        newUser.id,
+      );
+
+      const payload: JwtPayload = {
+        id: newUser.id,
+        email_address: newUser.email_address,
+        username: newUser.username,
+      };
+
+      return {
+        access_token: this.jwtService.sign(payload),
+        user: newUser,
+        tenant: newTenant,
+        isNewTenant: true,
+      };
+
   }
 
   async authenticateUser(
@@ -60,30 +96,8 @@ export class AuthService {
         tenant: tenant,
         isNewTenant: false,
       };
-    } else {
-      const username = email_address.split("@")[0]
-      const newUser = await this.usersService.create(email_address, username);
-
-      const newTenant = await this.tenantsService.create(
-        username + "'s Tenant",
-        'free',
-        true,
-        true,
-        newUser.id,
-      );
-
-      const payload: JwtPayload = {
-        id: newUser.id,
-        email_address: newUser.email_address,
-        username: newUser.username,
-      };
-
-      return {
-        access_token: this.jwtService.sign(payload),
-        user: newUser,
-        tenant: newTenant,
-        isNewTenant: true,
-      };
     }
+    
+    throw new BadRequestException("Unable to find user");
   }
 }

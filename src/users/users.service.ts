@@ -21,10 +21,11 @@ export class UsersService {
     });
   }
 
-  async create(email_address: string, username: string) {
+  async create(email_address: string, username: string, password: string) {
     return this.userModel.create({
       email_address: email_address,
       username: username,
+      password: password,
     });
   }
   async findOneByEmail(email_address: string): Promise<User> {

@@ -18,4 +18,11 @@ export class AuthController {
   login(@Query('email_address') email_address, @Query('password') password) {
     return this.authService.authenticateUser(email_address, password)
   }
+
+  // Public signup disabled
+  // @Public()
+  // @Get('signup')
+  // signup(@Query('email_address') email_address, @Query('password') password) {
+  //   return this.authService.registerUser(email_address, password)
+  // }
 }
