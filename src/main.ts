@@ -10,6 +10,7 @@ async function bootstrap() {
     .setTitle('Acme Corporation')
     .setDescription('API used by Acme Corporation partners')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
