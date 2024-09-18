@@ -50,6 +50,33 @@
           }
         }
       },
+      "/users/{id}": {
+        "get": {
+          "operationId": "UsersController_getUserById",
+          "summary": "Fetch a user by its ID",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "description": "The ID of the user",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
       "/cards": {
         "post": {
           "operationId": "CardsController_create",
@@ -259,6 +286,7 @@
         }
       }
     },
+    "tags": [],
     "components": {
       "securitySchemes": {
         "bearer": {
@@ -362,5 +390,4 @@
         }
       }
     }
-  }
-  
+}
