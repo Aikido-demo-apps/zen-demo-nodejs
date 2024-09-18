@@ -1,0 +1,366 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Acme Corporation",
+      "description": "API used by Acme Corporation partners",
+      "version": "1.0",
+      "contact": {}
+    },
+    "servers": [
+        {
+          "url": "https://sovulnerable.fly.dev/api",
+          "description": "Production Server"
+        }
+    ],
+    "paths": {
+      "/auth/me": {
+        "get": {
+          "operationId": "AuthController_getUserInfo",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "operationId": "AuthController_login",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/cards": {
+        "post": {
+          "operationId": "CardsController_create",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCardDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "get": {
+          "operationId": "CardsController_findAll",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/cards/{id}": {
+        "get": {
+          "operationId": "CardsController_findOne",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "patch": {
+          "operationId": "CardsController_update",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateCardDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "delete": {
+          "operationId": "CardsController_remove",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/documents/preview": {
+        "get": {
+          "operationId": "DocumentsController_create",
+          "summary": "Preview a document by fetching its content from a given URL",
+          "parameters": [
+            {
+              "name": "url",
+              "required": true,
+              "in": "query",
+              "description": "The URL of the document to preview",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/documents/{path}": {
+        "get": {
+          "operationId": "DocumentsController_fetch",
+          "summary": "Fetch a file by its path",
+          "parameters": [
+            {
+              "name": "path",
+              "required": true,
+              "in": "path",
+              "description": "The path to the file to fetch",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/documents/upload": {
+        "post": {
+          "operationId": "DocumentsController_uploadFile",
+          "summary": "Upload a file",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "file": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearer": {
+          "scheme": "bearer",
+          "bearerFormat": "JWT",
+          "type": "http"
+        }
+      },
+      "schemas": {
+        "LoginDto": {
+          "type": "object",
+          "properties": {
+            "email_address": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "email_address",
+            "password"
+          ]
+        },
+        "CreateCardDto": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "creditcard_number": {
+              "type": "string"
+            },
+            "cvc": {
+              "type": "number"
+            },
+            "expires_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "purpose": {
+              "type": "string"
+            },
+            "spending_limit": {
+              "type": "string"
+            },
+            "tenant_id": {
+              "type": "string"
+            },
+            "created_by": {
+              "type": "string"
+            },
+            "is_active": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "name",
+            "creditcard_number",
+            "cvc",
+            "expires_at",
+            "purpose",
+            "spending_limit",
+            "tenant_id",
+            "created_by",
+            "is_active"
+          ]
+        },
+        "UpdateCardDto": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "creditcard_number": {
+              "type": "string"
+            },
+            "cvc": {
+              "type": "number"
+            },
+            "expires_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "purpose": {
+              "type": "string"
+            },
+            "spending_limit": {
+              "type": "string"
+            },
+            "tenant_id": {
+              "type": "string"
+            },
+            "created_by": {
+              "type": "string"
+            },
+            "is_active": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
+  }
+  
