@@ -1,30 +1,40 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsDate, IsBoolean } from 'class-validator';
 
 export class CreateCardDto {
   @IsString()
+  @ApiProperty()
   name: string;
 
   @IsString()
+  @ApiProperty()
   creditcard_number: string;
 
   @IsNumber()
+  @ApiProperty()
   cvc: number;
 
   @IsDate()
+  @ApiProperty()
   expires_at: Date;
 
   @IsString()
+  @ApiProperty()
   purpose: string;
 
   @IsString()
+  @ApiProperty()
   spending_limit: string;
 
   @IsString()
+  @ApiProperty()
   tenant_id: string;
 
   @IsString()
+  @ApiProperty()
   created_by: string;
 
   @IsBoolean()
+  @ApiProperty()
   is_active: boolean;
 }

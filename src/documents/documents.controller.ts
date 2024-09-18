@@ -9,13 +9,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('documents')
+@ApiBearerAuth()
 export class DocumentsController {
   constructor(private authService: AuthService) {}
   @Get('preview')
+  @ApiOperation({ summary: 'Preview a document by fetching its content from a given URL' })
+  @ApiQuery({ name: 'url', required: true, description: 'The URL of the document to preview' })
   async create(@Query('url') url: string) {
     try {
       const response = await fetch(url);
@@ -27,6 +31,8 @@ export class DocumentsController {
   }
 
   @Get(':path')
+  @ApiOperation({ summary: 'Fetch a file by its path' })
+  @ApiParam({ name: 'path', required: true, description: 'The path to the file to fetch' })
   async fetch(@Request() req, @Param('path') filePath: string) {
     const user = req.user;
     const tenantId = await this.authService.getFirstTenant(user.id);
@@ -52,6 +58,19 @@ export class DocumentsController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload a file' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   async uploadFile(@Request() req, @UploadedFile() file) {
     const user = req.user;
     const tenantId = await this.authService.getFirstTenant(user.id);
