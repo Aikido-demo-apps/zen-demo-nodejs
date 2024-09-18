@@ -13,6 +13,22 @@ export class UsersService {
     return this.userModel.findAll();
   }
 
+  async legacyFindUserById(id: string): Promise<User> {
+    const query = `
+      SELECT * 
+      FROM users 
+      WHERE id = ${id}
+      LIMIT 1;
+    `;
+  
+    const [user] = await this.userModel.sequelize.query(query, {
+      model: this.userModel, 
+      mapToModel: true, 
+    });
+  
+    return user;
+  }
+
   async findOneById(id: number): Promise<User> {
     return this.userModel.findOne({
       where: {
