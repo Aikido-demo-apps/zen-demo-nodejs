@@ -1,0 +1,46 @@
+# -- stackhawk configuration for Vulnerable Fly App --
+app:
+  # -- An applicationId obtained from the StackHawk platform. --
+  applicationId: 415b2b8f-412e-4c28-93cb-f269a26453f3 # (required)
+  # -- The environment for the applicationId defined in the StackHawk platform. --
+  env: Development # (required)
+  # -- The url of your application to scan --
+  host: https://sovulnerable.fly.dev/api/ # (required)
+
+  authentication:
+  # Paths that HawkScan checks to see if it is still logged in during the scan
+    loggedInIndicator: "HTTP.*2[0-9][0-9]\\s*O[kK](\\s*)|HTTP.*3[0-9][0-9].*" # Change me
+    loggedOutIndicator: "HTTP.*4[0-9][0-9](\\s*)Unauthorized.*" # Change me
+    external:
+      values:
+          # Indicates whether the injected value is a cookie or token
+        - type: TOKEN
+          # If specified tokenType will be prepended the header value e.g. "Bearer xxxxxxxxx"
+          tokenType: Bearer
+          value:
+            # Name of the request header
+            name: Authorization
+            # Value of token
+            val: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWxfYWRkcmVzcyI6Im5hZGlyQGFpa2lkby5kZXYiLCJ1c2VybmFtZSI6Im5hZGlyIiwiaWF0IjoxNzI2NzUyODc0LCJleHAiOjE3MjY3NTY0NzR9.foK97lKHhggvZ2tSuCRelOM_iQghfDJmyAE7OVy1cjU
+    # A path that can only be seen when successfully logged in. HawkScan will check this path to see if log in was successfull
+    testPath:
+      path: /api/auth/me
+      success: ".*200.*"
+      requestMethod: GET
+
+
+# -- Customized Configuration for GraphQL/SOAP/OpenAPI, add here --
+  openApiConf:
+    path: /swagger/json # OR...
+#     filePath: openApi.json
+  autoPolicy: true
+  autoInputVectors: true
+  # Configuration Docs: https://docs.stackhawk.com/hawkscan/configuration/
+
+# -- If Authenticated Scanning is needed, add here --
+  # Authenticated Scanning Docs: https://docs.stackhawk.com/hawkscan/authenticated-scanning.html
+  # Authenticated Scanning Repo: https://github.com/kaakaww/scan-configuration/tree/main/Authentication
+
+# -- Help Section --
+  # Docs: https://docs.stackhawk.com/
+  # Contact Support: support@stackhawk.com

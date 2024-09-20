@@ -42,7 +42,9 @@ export class CardsController {
     @Body() updateCardDto: UpdateCardDto,
   ) {
     const user = req.user;
-    return this.cardsService.update(user.id, id, updateCardDto);
+    
+    //return this.cardsService.update(user.id, id, updateCardDto);
+    return this.cardsService.legacyUpdate(user.id, id, updateCardDto);
   }
 
   @Delete(':id')

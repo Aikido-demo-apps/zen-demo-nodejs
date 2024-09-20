@@ -11,6 +11,7 @@ import { Tenant, TenantAccess } from './tenants/tenant.model';
 import { CardsModule } from './cards/cards.module';
 import { Cards } from './cards/cards.model';
 import { DocumentsModule } from './documents/documents.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { DocumentsModule } from './documents/documents.module';
     CardsModule,
     DocumentsModule,
   ],
-  controllers: [AuthController],
+  controllers: [AppController, AuthController],
   providers: [AuthService],
 })
 export class AppModule {}

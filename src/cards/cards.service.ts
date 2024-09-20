@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Cards } from './cards.model';
 import { AuthService } from 'src/auth/auth.service';
+import { UpdateCardDto } from './dto/update-card.dto';
 
 @Injectable()
 export class CardsService {
@@ -29,10 +30,28 @@ export class CardsService {
     return card;
   }
 
+  async legacyUpdate(userId: number, id: string, updateData: UpdateCardDto): Promise<Cards> {
+    const query = `
+      SELECT * 
+      FROM cards 
+      WHERE id = ${id} AND 
+      tenant_id = ${updateData.tenant_id}
+      LIMIT 1;
+    `;
+  
+    const [card] = await this.cardsModel.sequelize.query(query, {
+      model: this.cardsModel, 
+      mapToModel: true, 
+    });
+  
+    return card.update(updateData);
+  }
+
   async update(userId: number, id: string, updateData: any): Promise<Cards> {
     const tenantId = await this.authService.getFirstTenant(userId);
     // vulnerable
     const card = await this.cardsModel.findByPk(id);
+    
     return card.update(updateData);
   }
 

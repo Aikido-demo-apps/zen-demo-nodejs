@@ -17,6 +17,8 @@ import { AuthService } from 'src/auth/auth.service';
 @ApiBearerAuth()
 export class DocumentsController {
   constructor(private authService: AuthService) {}
+
+  
   @Get('preview')
   @ApiOperation({ summary: 'Preview a document by fetching its content from a given URL' })
   @ApiQuery({ name: 'url', required: true, description: 'The URL of the document to preview' })
@@ -30,7 +32,7 @@ export class DocumentsController {
     }
   }
 
-  @Get(':path')
+  @Get('/file/:path')
   @ApiOperation({ summary: 'Fetch a file by its path' })
   @ApiParam({ name: 'path', required: true, description: 'The path to the file to fetch' })
   async fetch(@Request() req, @Param('path') filePath: string) {
