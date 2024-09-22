@@ -35,7 +35,7 @@ export class CardsService {
       SELECT * 
       FROM cards 
       WHERE id = ${id} AND 
-      tenant_id = ${updateData.tenant_id}
+      tenant_id = '${updateData.tenant_id}'
       LIMIT 1;
     `;
   
