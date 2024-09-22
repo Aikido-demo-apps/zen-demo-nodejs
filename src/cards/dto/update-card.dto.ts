@@ -18,9 +18,9 @@ export class UpdateCardDto {
   cvc?: number;
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiPropertyOptional()
-  expires_at?: Date;
+  expires_at?: string;
 
   @IsOptional()
   @IsString()
