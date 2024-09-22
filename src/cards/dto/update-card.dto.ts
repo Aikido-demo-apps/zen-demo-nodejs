@@ -1,14 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsNumber, IsDate, IsBoolean, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsDate, IsBoolean, IsOptional, Length, MaxLength } from 'class-validator';
 
 export class UpdateCardDto {
   @IsOptional()
   @IsString()
+  @MaxLength(200)
   @ApiPropertyOptional()
   name?: string;
 
   @IsOptional()
   @IsString()
+  @Length(16, 19)
   @ApiPropertyOptional()
   creditcard_number?: string;
 
