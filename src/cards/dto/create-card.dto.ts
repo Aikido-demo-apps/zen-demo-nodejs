@@ -14,9 +14,9 @@ export class CreateCardDto {
   @ApiProperty()
   cvc: number;
 
-  @IsDate()
+  @IsString()
   @ApiProperty()
-  expires_at: Date;
+  expires_at: string;
 
   @IsString()
   @ApiProperty()
