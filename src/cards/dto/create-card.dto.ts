@@ -11,9 +11,9 @@ export class CreateCardDto {
   @ApiProperty()
   creditcard_number: string;
 
-  @IsNumber()
+  @IsString()
   @ApiProperty()
-  cvc: number;
+  cvc: string;
 
   @IsString()
   @ApiProperty()

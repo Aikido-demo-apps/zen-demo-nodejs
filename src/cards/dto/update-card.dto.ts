@@ -14,9 +14,9 @@ export class UpdateCardDto {
   creditcard_number?: string;
 
   @IsOptional()
-  @IsNumber()
+  @IsString()
   @ApiPropertyOptional()
-  cvc?: number;
+  cvc?: string;
 
   @IsOptional()
   @IsString()
