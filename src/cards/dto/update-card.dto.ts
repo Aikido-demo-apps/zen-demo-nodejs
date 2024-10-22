@@ -10,7 +10,6 @@ export class UpdateCardDto {
 
   @IsOptional()
   @IsString()
-  @Length(16, 19)
   @ApiPropertyOptional()
   creditcard_number?: string;
 

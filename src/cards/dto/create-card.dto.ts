@@ -8,7 +8,6 @@ export class CreateCardDto {
   name: string;
 
   @IsString()
-  @Length(16, 19)
   @ApiProperty()
   creditcard_number: string;
 
