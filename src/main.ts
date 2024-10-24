@@ -21,7 +21,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
-  app.enableCors({origin: ["https://sovulnerable.fly.dev", "https://sovulnerable.fly.dev.evil.com"]})
+  app.enableCors({credentials: true, origin: ["https://sovulnerable.fly.dev", "https://sovulnerable.fly.dev.evil.com"]})
   await app.listen(3000);
 }
 bootstrap();
