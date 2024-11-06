@@ -51,7 +51,7 @@ export class CardsService {
     const query = `
       SELECT * 
       FROM cards 
-      WHERE id = ${id} AND 
+      WHERE id = '${id}' AND 
       tenant_id = '${updateData.tenant_id}'
       LIMIT 1;
     `;
