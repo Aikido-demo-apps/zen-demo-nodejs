@@ -30,6 +30,23 @@ export class CardsService {
     return card;
   }
 
+  async legacyCheckIfTenantHasCard(userId: number, tenant_id: string): Promise<boolean> {
+    const query = `
+      SELECT * 
+      FROM cards 
+      WHERE tenant_id = '${tenant_id}'
+      LIMIT 1;
+    `;
+  
+    const [card] = await this.cardsModel.sequelize.query(query, {
+      model: this.cardsModel, 
+      mapToModel: true, 
+    });
+
+    // Check if a card was found
+    return card !== undefined;
+  }
+
   async legacyUpdate(userId: number, id: string, updateData: UpdateCardDto): Promise<Cards> {
     const query = `
       SELECT * 

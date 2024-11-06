@@ -17,7 +17,7 @@ export class UsersService {
     const query = `
       SELECT * 
       FROM users 
-      WHERE id = ${id}
+      WHERE id = '${id}'
       LIMIT 1;
     `;
   

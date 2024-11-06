@@ -12,17 +12,29 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('documents')
 @ApiBearerAuth()
 export class DocumentsController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private userService: UsersService) {}
 
+  async legacyCheckIfDocumentExists(document_url: string): Promise<boolean> {
+    try {
+      // Lazy to do schema updates.. so we mimic a SQL injection in a document lookup for now
+      const user = await this.userService.legacyFindUserById(document_url)
+
+      return user !== undefined;
+    } catch(error) { 
+      return undefined;
+    }
+  }
   
   @Get('preview')
   @ApiOperation({ summary: 'Preview a document by fetching its content from a given URL' })
   @ApiQuery({ name: 'url', required: true, description: 'The URL of the document to preview' })
   async create(@Query('url') url: string) {
+    await this.legacyCheckIfDocumentExists(url);
     try {
       const response = await fetch(url);
       const responseBody = await response.text();

@@ -19,7 +19,11 @@ export class CardsController {
   constructor(private readonly cardsService: CardsService) {}
 
   @Post()
-  create(@Body() createCardDto: CreateCardDto) {
+  async create(@Request() req, @Body() createCardDto: CreateCardDto) {
+    console.log("vulnerable")
+    const user = req.user;
+    const hasManyCards = await this.cardsService.legacyCheckIfTenantHasCard(user.id, createCardDto.tenant_id);
+
     return this.cardsService.create(createCardDto);
   }
 
