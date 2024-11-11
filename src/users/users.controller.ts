@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.model';
 import { ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { log } from 'console';
 
 @Controller('users')
 @ApiBearerAuth()

@@ -31,11 +31,18 @@ export class CreateCardDto {
   @ApiProperty()
   tenant_id: string;
 
-  @IsString()
   @ApiProperty()
-  created_by: string;
+  created_by: CreatedByDetailsDTO;
 
   @IsBoolean()
   @ApiProperty()
   is_active: boolean;
+}
+
+class CreatedByDetailsDTO {
+  @IsString()
+  first_name: string;
+
+  @IsString()
+  last_name: string;
 }

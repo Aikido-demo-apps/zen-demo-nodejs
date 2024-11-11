@@ -87,6 +87,7 @@ export class DocumentsController {
   })
   async uploadFile(@Request() req, @UploadedFile() file) {
     const user = req.user;
+    
     const tenantId = await this.authService.getFirstTenant(user.id);
 
     try {
