@@ -1,14 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsDate, IsBoolean, MaxLength, Length } from 'class-validator';
 
-class CreatedByDetailsDTO {
+export class CreatedBy {
   @IsString()
+  @ApiProperty()
   first_name: string;
-
-  @IsString()
-  last_name: string;
 }
-
 
 export class CreateCardDto {
   @IsString()
@@ -40,10 +37,11 @@ export class CreateCardDto {
   @ApiProperty()
   tenant_id: string;
 
-  @ApiProperty()
-  created_by: CreatedByDetailsDTO;
+  @ApiProperty({ type: CreatedBy })
+  created_by: CreatedBy;
 
   @IsBoolean()
   @ApiProperty()
   is_active: boolean;
 }
+
