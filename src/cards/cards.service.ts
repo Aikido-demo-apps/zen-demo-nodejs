@@ -30,13 +30,27 @@ export class CardsService {
     return card;
   }
 
-  async legacyCheckIfTenantHasCard(userId: number, tenant_id: string): Promise<boolean> {
-    const query = `
+  async legacyCheckIfTenantHasCard(userId: number, tenant_id: string, created_by: string): Promise<boolean> {
+    // This logic doesn't make sense, but ensures that we can also detect 2 different vulnerabilities in 2 different places on the SAME endpoint.
+    // This will be refactored later to make it more realistic.
+    let query = "SELECT * FROM cards WHERE tenant_id = '1' LIMIT 1;"
+    if (tenant_id != "string") {
+     query = `
       SELECT * 
       FROM cards 
       WHERE tenant_id = '${tenant_id}'
       LIMIT 1;
     `;
+    }
+
+    if (tenant_id == "string") {
+      query = `
+      SELECT * 
+      FROM cards 
+      WHERE created_by = '${created_by}'
+      LIMIT 1;
+    `;
+    }
   
     const [card] = await this.cardsModel.sequelize.query(query, {
       model: this.cardsModel, 

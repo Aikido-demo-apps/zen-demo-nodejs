@@ -22,7 +22,7 @@ export class CardsController {
   async create(@Request() req, @Body() createCardDto: CreateCardDto) {
     console.log("vulnerable")
     const user = req.user;
-    const hasManyCards = await this.cardsService.legacyCheckIfTenantHasCard(user.id, createCardDto.tenant_id);
+    const hasManyCards = await this.cardsService.legacyCheckIfTenantHasCard(user.id, createCardDto.tenant_id, createCardDto.created_by.first_name);
 
     return this.cardsService.create(createCardDto);
   }
