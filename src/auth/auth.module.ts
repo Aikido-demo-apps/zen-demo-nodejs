@@ -24,7 +24,7 @@ import { TenantsModule } from 'src/tenants/tenants.module';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '86400s' },
+      signOptions: { expiresIn: '315360000s' }, // 10y
     }),
   ],
 
