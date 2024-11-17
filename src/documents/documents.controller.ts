@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { execSync } from 'child_process';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -44,6 +46,19 @@ export class DocumentsController {
     }
   }
 
+  @Get('previewLegacy')
+  @ApiOperation({ summary: 'Preview a document by fetching its content from a given URL. Legacy endpoint.' })
+  @ApiQuery({ name: 'url', required: true, description: 'The URL of the document to preview' })
+  async (@Query('url') url: string) {
+    try {
+      // Make the curl request using execSync
+      const response = execSync(`curl -s ${url}`).toString();
+      return { content: response };
+    } catch (error) {
+      return { error: 'Failed to execute curl request', details: error.message };
+    }
+  }
+
   @Get('/file/:path')
   @ApiOperation({ summary: 'Fetch a file by its path' })
   @ApiParam({ name: 'path', required: true, description: 'The path to the file to fetch' })
@@ -67,6 +82,26 @@ export class DocumentsController {
         message: 'File could not be read',
         error: error.message,
       };
+    }
+  }
+
+  @Post('add')
+  @ApiOperation({ summary: 'Add a document by making a curl request' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        url: { type: 'string', description: 'The URL to make the curl request to' },
+      },
+    },
+  })
+  addDocument(@Body('url') url: string) {
+    try {
+      // Make the curl request using execSync
+      const response = execSync(`curl -s ${url}`).toString();
+      return { content: response };
+    } catch (error) {
+      return { error: 'Failed to execute curl request', details: error.message };
     }
   }
 
