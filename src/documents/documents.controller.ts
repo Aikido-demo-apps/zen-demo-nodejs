@@ -5,6 +5,8 @@ import {
   Param,
   Post,
   Query,
+  RawBodyRequest,
+  Req,
   Request,
   UploadedFile,
   UseInterceptors,
@@ -15,11 +17,13 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
+import { CreateDocumentDto } from './dto/create-document.dto';
+import { DocumentsService } from './documents.service';
 
 @Controller('documents')
 @ApiBearerAuth()
 export class DocumentsController {
-  constructor(private authService: AuthService, private userService: UsersService) {}
+  constructor(private authService: AuthService, private userService: UsersService, private documentService: DocumentsService) {}
 
   async legacyCheckIfDocumentExists(document_url: string): Promise<boolean> {
     try {
@@ -102,6 +106,43 @@ export class DocumentsController {
       return { content: response };
     } catch (error) {
       return { error: 'Failed to execute curl request', details: error.message };
+    }
+  }
+
+  @Post('addMetadata')
+  async addDocumentMetadata(@Body() createDocumentDto: CreateDocumentDto) {
+    try {
+      // Make the curl request using execSync
+      const response = await this.documentService.create(createDocumentDto);
+      return response;
+    } catch (error) {
+      return { error: 'Failed to add metadata of document', details: error.message };
+    }
+  }
+
+  @Post('findDocumentsMetadata')
+  async findDocumentsMetadata(@Body() createDocumentDto: CreateDocumentDto) {
+    try {
+      // Make the curl request using execSync
+      const response = await this.documentService.findByContent(createDocumentDto.content);
+      return response;
+    } catch (error) {
+      return { error: 'Failed to add metadata of document', details: error.message };
+    }
+  }
+
+  @Post('findDocumentsMetadataLegacy')
+  async findDocumentsMetadataLegacy(@Req() req: Request) {
+    const jsonBody = req.body;
+
+    console.log(jsonBody);
+
+
+    try {
+      const response = await this.documentService.findByAnything(jsonBody);
+      return response;
+    } catch (error) {
+      return { error: 'Failed to add metadata of document', details: error.message };
     }
   }
 

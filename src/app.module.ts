@@ -14,11 +14,13 @@ import { Cards } from './cards/cards.model';
 import { DocumentsModule } from './documents/documents.module';
 import { AppController } from './app.controller';
 import { GraphQLModule } from '@nestjs/graphql';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
     AuthorModule,
     AuthModule,
+    MongooseModule.forRoot('mongodb://admin:veryzVulnerableYez13!@sovulnerablemongodb.fly.dev:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.6.1'),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       uri:
