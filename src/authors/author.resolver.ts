@@ -1,5 +1,5 @@
-import { Resolver, Query } from '@nestjs/graphql';
-import { Author } from './author.model';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Author, CreateAuthorInput } from './author.model';
 
 @Resolver(() => Author)
 export class AuthorResolver {
@@ -10,5 +10,12 @@ export class AuthorResolver {
       firstName: 'firstName',
       lastName: 'lastName',
     };
+  }
+
+  @Mutation(() => Author)
+  async createAuthor(
+    @Args('createAuthorInput') createAuthorInput: CreateAuthorInput,
+  ): Promise<Author> {
+    return createAuthorInput;
   }
 }

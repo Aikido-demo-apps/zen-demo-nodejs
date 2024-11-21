@@ -50,6 +50,18 @@ export class DocumentsController {
     }
   }
 
+  @Get('previewSingleDocumentMetadata')
+  @ApiOperation({ summary: 'Provide a document ID to preview the metadata of a single document' })
+  @ApiQuery({ name: 'document_id', required: true, description: 'The ID of the document to preview' })
+  async previewSingleDocument(@Query('document_id') document_id: string) {
+    try {
+      const response = await this.documentService.findByContent(document_id);
+      return response;
+    } catch (error) {
+      return { error: 'Failed to add metadata of document', details: error.message };
+    }
+  }
+
   @Get('previewLegacy')
   @ApiOperation({ summary: 'Preview a document by fetching its content from a given URL. Legacy endpoint.' })
   @ApiQuery({ name: 'url', required: true, description: 'The URL of the document to preview' })
