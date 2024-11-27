@@ -13,7 +13,7 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-@Controller('cards')
+@Controller('api/cards')
 @ApiBearerAuth()
 export class CardsController {
   constructor(private readonly cardsService: CardsService) {}

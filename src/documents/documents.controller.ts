@@ -20,7 +20,7 @@ import { UsersService } from 'src/users/users.service';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { DocumentsService } from './documents.service';
 
-@Controller('documents')
+@Controller('api/documents')
 @ApiBearerAuth()
 export class DocumentsController {
   constructor(private authService: AuthService, private userService: UsersService, private documentService: DocumentsService) {}

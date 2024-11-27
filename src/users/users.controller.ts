@@ -4,7 +4,7 @@ import { User } from './user.model';
 import { ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { log } from 'console';
 
-@Controller('users')
+@Controller('api/users')
 @ApiBearerAuth()
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
