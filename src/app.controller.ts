@@ -11,6 +11,41 @@ export class AppController {
     return;
   }
 
+
+  @Get('.circleci/config.yml')
+  getCircleCiConfig() {
+
+    const file = `
+    version: 2.1
+
+    aliases:
+      - &base_image
+        - image: cimg/base:2024.10
+    
+    orbs:
+      aws-cli: circleci/aws-cli@3.1.3
+    
+    jobs:
+      checkout_code:
+        docker: *base_image
+        resource_class: medium
+        steps:
+          - run: mkdir -p ~/.ssh && ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+          - run: git clone --depth 1 "$CIRCLE_REPOSITORY_URL" --branch "$CIRCLE_BRANCH" .
+          - save_cache:
+              key: sourcecode-{{ .Revision }}
+              paths:
+                - .
+    
+    workflows:
+      default_pipeline:
+        jobs:
+          - checkout_code
+    `;
+
+    return file;
+  }
+
   @Get('apache.conf')
    getConfigFile() {
     const file = `
