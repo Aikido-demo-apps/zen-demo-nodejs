@@ -30,9 +30,7 @@ import {
 		  );
 		}
 	  }
-  
+
 	  return true;
 	}
 }
-
-module.exports = ZenGuard;
