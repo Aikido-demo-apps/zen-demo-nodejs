@@ -6,7 +6,7 @@ export class AuthorResolver {
   @Query(() => Author)
   async author() {
     return {
-      id: 'id',
+      id: 1,
       firstName: 'firstName',
       lastName: 'lastName',
     };
