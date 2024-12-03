@@ -4,9 +4,8 @@ import {
 	HttpException,
 	HttpStatus,
   } from "@nestjs/common";
-  
-  const Zen = require("@aikidosec/firewall");
-  
+import * as Zen from "@aikidosec/firewall";
+
   @Injectable()
   export class ZenGuard implements CanActivate {
 	canActivate(): boolean {
