@@ -3,6 +3,12 @@ import { Public } from './decorators/public';
 
 @Controller()  // This will automatically use the global prefix 'api'
 export class AppController {
+
+  const applicationConfig = {
+      baseUrl: "https://google.com/",
+      appSecret: "&6FVphQ@6a",
+      userId: 22,
+  };
   
   @Head()
   @Public()
