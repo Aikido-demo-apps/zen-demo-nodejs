@@ -21,8 +21,8 @@ export class CardsService {
 
     return await this.cardsModel.findAll({
         where: { tenant_id: tenantId.toString() },
-        order: [['createdAt', 'DESC']], // Assumes you have a `createdAt` column
-        limit: 10, // Limits the result to the last 10 cards
+        order: [['createdAt', 'DESC']], 
+        limit: 20, 
     });
   }
 
