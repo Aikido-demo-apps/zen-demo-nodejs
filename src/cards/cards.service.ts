@@ -16,12 +16,18 @@ export class CardsService {
     return this.cardsModel.create(cardData);
   }
 
-  async findAll(): Promise<Cards[]> {
-    return this.cardsModel.findAll();
+  async findAll(userId: number): Promise<Cards[]> {
+    const tenantId = await this.authService.getFirstTenant(userId);
+
+    return await this.cardsModel.findAll({
+        where: { tenant_id: tenantId.toString() },
+        order: [['createdAt', 'DESC']], // Assumes you have a `createdAt` column
+        limit: 10, // Limits the result to the last 10 cards
+    });
   }
 
   async findOne(userId: number, id: string): Promise<Cards> {
-    const tenantId = this.authService.getFirstTenant(userId);
+    const tenantId = await this.authService.getFirstTenant(userId);
     // vulnerable
     const card = await this.cardsModel.findByPk(id);
     if (!card) {

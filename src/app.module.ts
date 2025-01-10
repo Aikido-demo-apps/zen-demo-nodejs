@@ -38,6 +38,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       csrfPrevention: false,
       introspection: true,
       autoSchemaFile: true,
+      allowBatchedHttpRequests: true,
+      
     }),
   ],
   controllers: [AppController, AuthController],

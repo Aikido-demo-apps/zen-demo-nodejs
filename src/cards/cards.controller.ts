@@ -28,8 +28,10 @@ export class CardsController {
   }
 
   @Get()
-  findAll() {
-    return this.cardsService.findAll();
+  async findAll(@Request() req) {
+    const user = req.user;
+
+    return await this.cardsService.findAll(user.id);
   }
 
   @Get(':id')
