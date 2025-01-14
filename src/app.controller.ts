@@ -5,12 +5,12 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 @Controller()
 export class AppController {
 
-  const applicationConfig = {
+  applicationConfig = {
       baseUrl: "https://google.com/",
       appSecret: "&6FVphQ@6a",
       userId: 22,
   };
-  
+
   @Head()
   @Public()
   @ApiExcludeEndpoint()

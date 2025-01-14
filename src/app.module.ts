@@ -15,6 +15,8 @@ import { DocumentsModule } from './documents/documents.module';
 import { AppController } from './app.controller';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PublicController } from './public/public.controller';
+import * as process from 'node:process';
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       
     }),
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController, AuthController, PublicController],
   providers: [AuthService],
 })
 export class AppModule {}
