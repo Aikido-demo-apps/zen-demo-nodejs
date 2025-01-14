@@ -1,5 +1,5 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthController } from './auth/auth.controller';
@@ -15,8 +15,8 @@ import { DocumentsModule } from './documents/documents.module';
 import { AppController } from './app.controller';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PublicController } from "./public/public.controller";
-import { UserMockMiddleware } from "./usermock.middleware";
+import { PublicController } from './public/public.controller';
+import * as process from 'node:process';
 
 @Module({
   imports: [
@@ -45,10 +45,4 @@ import { UserMockMiddleware } from "./usermock.middleware";
   controllers: [AppController, AuthController, PublicController],
   providers: [AuthService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(UserMockMiddleware)
-      .forRoutes('*'); // Apply to all routes
-  }
-}
+export class AppModule {}

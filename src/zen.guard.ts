@@ -2,10 +2,11 @@ import {
   Injectable,
   CanActivate,
   HttpException,
-  HttpStatus, ExecutionContext
-} from "@nestjs/common";
-import { Observable } from "rxjs";
-import { shouldBlockRequest, setUser } from "@aikidosec/firewall";
+  HttpStatus,
+  ExecutionContext,
+} from '@nestjs/common';
+import { Observable } from 'rxjs';
+import { shouldBlockRequest, setUser } from '@aikidosec/firewall';
 
 @Injectable()
 export class ZenGuard implements CanActivate {
