@@ -1,10 +1,10 @@
-# fly.toml app configuration file generated for sovulnerable on 2024-09-17T17:42:47+02:00
+# fly.toml app configuration file generated for sovulnerable-white-mountain-7481 on 2025-01-17T15:00:44+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'sovulnerable'
-primary_region = 'ewr'
+app = 'nodejs'
+primary_region = 'ams'
 
 [build]
 
@@ -16,8 +16,10 @@ primary_region = 'ewr'
   min_machines_running = 0
   processes = ['app']
 
-[http_service.http_options.response.headers]
-    Server = "Apache/2.4.6 (CentOS) PHP/5.4.16"
+  [http_service.http_options]
+    [http_service.http_options.response]
+      [http_service.http_options.response.headers]
+        Server = 'Apache/2.4.6 (CentOS) PHP/5.4.16'
 
 [[vm]]
   memory = '1gb'
