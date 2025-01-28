@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for sovulnerable-white-mountain-7481 on 2025-01-17T15:00:44+01:00
+# fly.toml app configuration file generated for zen-demo-nodejs on 2025-01-27T17:01:17+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'nodejs'
+app = 'zen-demo-nodejs'
 primary_region = 'ams'
 
 [build]
@@ -22,6 +22,6 @@ primary_region = 'ams'
         Server = 'Apache/2.4.6 (CentOS) PHP/5.4.16'
 
 [[vm]]
-  memory = '1gb'
+  memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
