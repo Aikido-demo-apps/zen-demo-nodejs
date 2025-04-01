@@ -1,4 +1,4 @@
-import Zen from "@aikidosec/firewall";
+import * as Zen from "@aikidosec/firewall"
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
@@ -8,6 +8,11 @@ import { logger } from 'hono/logger'
 import { promisify } from 'util'
 import axios from 'axios'
 import * as path from 'path'
+
+// Server is running on http://localhost:3000
+//   <-- GET /
+//   shouldBlockRequest() was called without a context. The request will not be blocked. Make sure to call shouldBlockRequest() within an HTTP request. If you're using serverless functions, make sure to use the handler wrapper provided by Zen. Also ensure you import Zen at the top of your main app file (before any other imports).
+// --> GET / 200 11ms
 
 const execPromise = promisify(exec)
 
