@@ -2,7 +2,11 @@ import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
 import fs from 'fs';
+import { exec } from 'child_process'
 import { logger } from 'hono/logger'
+import { promisify } from 'util'
+
+const execPromise = promisify(exec)
 
 const app = new Hono()
 app.use(logger())
@@ -41,6 +45,21 @@ app.get('/test_bot_blocking', (c) => {
 
 app.get('/test_user_blocking', (c) => {
   return c.text("Hello User with id: " + c.req.header('user'))
+})
+
+app.post('/api/execute', async (c) => {
+  try {
+    const { userCommand } = await c.req.json()
+    const { stdout, stderr } = await execPromise(userCommand)
+    const output = stdout || stderr
+
+    return c.json({ success: true, output })
+  } catch (error) {
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    })
+  }
 })
 
 app.use('*', serveStatic({ root: './static/public' }));
