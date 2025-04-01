@@ -5,11 +5,27 @@ import fs from 'fs';
 import { exec } from 'child_process'
 import { logger } from 'hono/logger'
 import { promisify } from 'util'
+import "@aikidosec/firewall";
 
 const execPromise = promisify(exec)
 
 const app = new Hono()
+
+// Enable logging
 app.use(logger())
+
+// Add Zen
+app.use(async (c, next) => {
+  // Get the user from your authentication middleware
+  // or wherever you store the user
+//  Zen.setUser({
+//    id: "123",
+//    name: "John Doe", // Optional
+//  });
+
+  await next();
+});
+Zen.addHonoMiddleware(app);
 
 app.get('/', (c) => {
   return c.html(fs.readFileSync('static/index.html', 'utf8'));
