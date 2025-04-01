@@ -5,7 +5,7 @@ import fs from 'fs';
 import { exec } from 'child_process'
 import { logger } from 'hono/logger'
 import { promisify } from 'util'
-import "@aikidosec/firewall";
+import Zen from "@aikidosec/firewall";
 
 const execPromise = promisify(exec)
 
