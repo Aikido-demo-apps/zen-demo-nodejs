@@ -22,6 +22,8 @@ COPY --from=builder --chown=hono:nodejs /app/node_modules /app/node_modules
 COPY --from=builder --chown=hono:nodejs /app/ /app/
 COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 
+ENV AIKIDO_BLOCK "true"
+
 USER hono
 EXPOSE 3000
 
