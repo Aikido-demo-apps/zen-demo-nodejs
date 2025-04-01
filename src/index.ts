@@ -61,8 +61,11 @@ function getName(number: number) {
   const index = Math.abs(number) % names.length;
   return names[index];
 }
+
+// Initiate Zen middleware
 Zen.addHonoMiddleware(app);
 
+// Routes
 app.get('/', (c) => {
   return c.html(fs.readFileSync('static/index.html', 'utf8'));
 })
@@ -145,9 +148,10 @@ app.get('/api/read', async (c) => {
   }
 })
 
-
+// Static files
 app.use('*', serveStatic({ root: './static/public' }));
 
+// Serve app
 serve({
   fetch: app.fetch,
   port: 3000
