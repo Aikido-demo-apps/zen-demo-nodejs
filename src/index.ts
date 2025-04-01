@@ -18,15 +18,49 @@ app.use(logger())
 
 // Add Zen
 app.use(async (c, next) => {
+  const user = c.req.header('user');
 
+  if (user) {
+    const id = parseInt(user);
+    Zen.setUser({
+      id: id.toString(),
+      name: getName(id)
+    });
+  } else {
+    // Check for X-User-ID and X-User-Name headers
+    const userId = c.req.header('X-User-ID');
+    const userName = c.req.header('X-User-Name');
 
-   Zen.setUser({
-     id: "123",
-     name: "John Doe", // Optional
-   });
+    if (userId && userName) {
+      const id = parseInt(userId);
+      Zen.setUser({
+        id: id.toString(),
+        name: userName
+      });
+    }
+  }
 
-    await next();
+  await next();
 });
+
+// Helper function to get name based on number
+function getName(number: number) {
+  const names = [
+    "Hans",
+    "Pablo",
+    "Samuel",
+    "Timo",
+    "Tudor",
+    "Willem",
+    "Wout",
+    "Yannis",
+  ];
+
+  // Use absolute value to handle negative numbers
+  // Use modulo to wrap around the list
+  const index = Math.abs(number) % names.length;
+  return names[index];
+}
 Zen.addHonoMiddleware(app);
 
 app.get('/', (c) => {
