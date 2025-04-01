@@ -1,26 +1,28 @@
-# Base image
-FROM node:18
+FROM node:22-alpine AS base
 
-WORKDIR /usr/src/app
+FROM base AS builder
 
-COPY package*.json ./
+RUN apk add --no-cache gcompat
+WORKDIR /app
 
-RUN npm install
+COPY package*json tsconfig.json src  ./
+COPY static/ static/
 
-COPY . .
+RUN npm ci && \
+    npm run build && \
+    npm prune --production
 
-RUN npm run build
+FROM base AS runner
+WORKDIR /app
 
-# Create the necessary folder
-RUN mkdir -p /usr/uploads/tenant/1/files/
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 hono
 
-RUN chown -R node:node /usr/uploads/tenant/1/files/
-RUN chmod -R 755 /usr/uploads/tenant/1/files/
+COPY --from=builder --chown=hono:nodejs /app/node_modules /app/node_modules
+COPY --from=builder --chown=hono:nodejs /app/ /app/
+COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
 
-
+USER hono
 EXPOSE 3000
 
-ENV NODE_ENV production
-
-# Start the server using the production build
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "/app/dist/index.js"]

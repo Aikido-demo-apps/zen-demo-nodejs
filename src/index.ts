@@ -54,7 +54,7 @@ app.post('/api/execute', async (c) => {
     const output = stdout || stderr
 
     return c.json({ success: true, output })
-  } catch (error) {
+  } catch (error: any) {
     return c.json({
       success: false,
       output: `Error: ${error.message || 'Unknown error'}`
