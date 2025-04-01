@@ -1,3 +1,4 @@
+import Zen from "@aikidosec/firewall";
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
@@ -6,7 +7,6 @@ import { exec } from 'child_process'
 import { logger } from 'hono/logger'
 import { promisify } from 'util'
 import axios from 'axios'
-import Zen from "@aikidosec/firewall";
 import * as path from 'path'
 
 const execPromise = promisify(exec)
