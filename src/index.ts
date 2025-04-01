@@ -5,6 +5,7 @@ import fs from 'fs';
 import { exec } from 'child_process'
 import { logger } from 'hono/logger'
 import { promisify } from 'util'
+import axios from 'axios'
 import Zen from "@aikidosec/firewall";
 
 const execPromise = promisify(exec)
@@ -16,14 +17,14 @@ app.use(logger())
 
 // Add Zen
 app.use(async (c, next) => {
-  // Get the user from your authentication middleware
-  // or wherever you store the user
-//  Zen.setUser({
-//    id: "123",
-//    name: "John Doe", // Optional
-//  });
 
-  await next();
+
+   Zen.setUser({
+     id: "123",
+     name: "John Doe", // Optional
+   });
+
+    await next();
 });
 Zen.addHonoMiddleware(app);
 
@@ -70,6 +71,23 @@ app.post('/api/execute', async (c) => {
     const output = stdout || stderr
 
     return c.json({ success: true, output })
+  } catch (error: any) {
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    })
+  }
+})
+
+app.post('/api/request', async (c) => {
+  try {
+    const { url } = await c.req.json()
+    const response = await axios.get(url)
+
+    return c.json({
+      success: true,
+      output: response.data
+    })
   } catch (error: any) {
     return c.json({
       success: false,
