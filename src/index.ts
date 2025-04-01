@@ -7,6 +7,7 @@ import { logger } from 'hono/logger'
 import { promisify } from 'util'
 import axios from 'axios'
 import Zen from "@aikidosec/firewall";
+import * as path from 'path'
 
 const execPromise = promisify(exec)
 
@@ -95,6 +96,21 @@ app.post('/api/request', async (c) => {
     })
   }
 })
+
+app.get('/api/read', async (c) => {
+  try {
+    const filePath = c.req.query('path') || ""
+    const fullPath = path.join('static/blogs/', filePath)
+
+    return c.text(fs.readFileSync(fullPath, 'utf8'))
+  } catch (error: any) {
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    })
+  }
+})
+
 
 app.use('*', serveStatic({ root: './static/public' }));
 
