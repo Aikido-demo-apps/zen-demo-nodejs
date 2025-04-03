@@ -8,6 +8,7 @@ import { logger } from 'hono/logger'
 import { promisify } from 'util'
 import axios from 'axios'
 import * as path from 'path'
+import { DatabaseHelper, initDatabase, CommandRequest, RequestRequest, CreateRequest } from './database'
 
 const execPromise = promisify(exec)
 
@@ -148,8 +149,49 @@ app.get('/api/read', async (c) => {
   }
 })
 
+// Pet API routes
+app.get('/api/pets/', async (c) => {
+  const pets = await DatabaseHelper.getAllPets();
+  return c.json(pets);
+});
+
+app.get('/api/pets/:id', async (c) => {
+  const id = c.req.param('id');
+  const pet = await DatabaseHelper.getPetById(id);
+  return c.json(pet);
+});
+
+app.post('/api/create', async (c) => {
+  try {
+    const data = await c.req.json();
+    const createRequest = { name: data.name };
+    const rowsCreated = await DatabaseHelper.createPetByName(createRequest.name);
+
+    if (rowsCreated === -1) {
+      return c.text("Database error occurred", 500);
+    }
+    return c.text("Success!");
+  } catch (error) {
+    console.error("Error creating pet:", error);
+    return c.text("Error processing request", 500);
+  }
+});
+
+app.get('/clear', async (c) => {
+  await DatabaseHelper.clearAll();
+  return c.text("Cleared successfully.");
+});
+
 // Static files
 app.use('*', serveStatic({ root: './static/public' }));
+
+// Initialize database
+try {
+  initDatabase(app);
+  console.log('Database initialized successfully');
+} catch (error) {
+  console.error('Failed to initialize database:', error);
+}
 
 // Serve app
 serve({
