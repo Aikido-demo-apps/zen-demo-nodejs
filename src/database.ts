@@ -4,7 +4,7 @@ import { parse } from 'url';
 // Request classes
 export class CreateRequest {
   name: string;
-  
+
   constructor(data: any) {
     this.name = data.name;
   }
@@ -12,7 +12,7 @@ export class CreateRequest {
 
 export class CommandRequest {
   userCommand: string;
-  
+
   constructor(data: any) {
     this.userCommand = data.userCommand;
   }
@@ -20,7 +20,7 @@ export class CommandRequest {
 
 export class RequestRequest {
   url: string;
-  
+
   constructor(data: any) {
     this.url = data.url;
   }
@@ -29,7 +29,7 @@ export class RequestRequest {
 export class DatabaseHelper {
   // Regex pattern for input validation - keeping the security vulnerability
   private static REGEX = /^[A-Za-z0-9 ,-.]+$/;
-  
+
   private static pool: Pool;
 
   /**
@@ -46,7 +46,7 @@ export class DatabaseHelper {
 
     // Create connection pool
     this.pool = new Pool({
-      host: url.hostname,
+      host: url.hostname || undefined,
       port: parseInt(url.port || '5432'),
       database: url.pathname ? url.pathname.substring(1) : undefined,
       user: url.auth ? url.auth.split(':')[0] : undefined,
@@ -95,7 +95,7 @@ export class DatabaseHelper {
     const pets: any[] = [];
     try {
       const result = await this.pool.query("SELECT * FROM pets");
-      
+
       for (const row of result.rows) {
         const { pet_id, pet_name, owner } = row;
 
