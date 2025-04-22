@@ -1,0 +1,15 @@
+# fly.toml app configuration file generated for zen-demo-nodejs on 2025-01-27T17:01:17+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'zen-demo-nodejs-danger'
+primary_region = 'ams'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[env]
+AIKIDO_DISABLE = 'true'
