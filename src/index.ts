@@ -114,7 +114,7 @@ app.post('/api/execute', async (c) => {
     return c.json({
       success: false,
       output: `Error: ${error.message || 'Unknown error'}`
-    })
+    }, 500)
   }
 })
 
@@ -131,7 +131,7 @@ app.post('/api/request', async (c) => {
     return c.json({
       success: false,
       output: `Error: ${error.message || 'Unknown error'}`
-    })
+    }, 500)
   }
 })
 
@@ -145,7 +145,7 @@ app.get('/api/read', async (c) => {
     return c.json({
       success: false,
       output: `Error: ${error.message || 'Unknown error'}`
-    })
+    }, 500)
   }
 })
 
