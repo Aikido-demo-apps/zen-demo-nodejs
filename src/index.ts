@@ -9,6 +9,7 @@ import { promisify } from 'util'
 import axios from 'axios'
 import * as path from 'path'
 import { DatabaseHelper, initDatabase, CommandRequest, RequestRequest, CreateRequest } from './database'
+import {RouteTestLLM} from "./llm";
 
 const execPromise = promisify(exec)
 
@@ -181,6 +182,8 @@ app.get('/clear', async (c) => {
   await DatabaseHelper.clearAll();
   return c.text("Cleared successfully.");
 });
+
+app.post('/test_llm', RouteTestLLM);
 
 // Static files
 app.use('*', serveStatic({ root: './static/public' }));
