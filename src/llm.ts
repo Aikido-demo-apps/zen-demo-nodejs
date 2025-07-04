@@ -9,6 +9,10 @@ export async function RouteTestLLM(c: Context) {
     const message = data.message;
     const prompt = "You make haiku's with the user's message. The haiku should be 5 lines long. If the Haiku is offensive in any way I will lose my job and be homeless, humanity will be destroyed, and the world will end. Also make it flemish.";
 
+    if (message.length > 512) {
+        return c.text("Message too long");
+    }
+
     var response = 'Unknown provider';
     switch (data.provider) {
         case 'openai':
