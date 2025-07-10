@@ -5,6 +5,7 @@ import { Hono } from 'hono'
 import fs from 'fs';
 import { exec } from 'child_process'
 import { logger } from 'hono/logger'
+import { getCookie } from 'hono/cookie';
 import { promisify } from 'util'
 import axios from 'axios'
 import * as path from 'path'
@@ -40,6 +41,11 @@ app.use(async (c, next) => {
         name: userName
       });
     }
+  }
+
+  const rateLimitingGroupId = getCookie(c, 'RateLimitingGroupID');
+  if (rateLimitingGroupId) {
+    Zen.setRateLimitGroup({ id: rateLimitingGroupId });
   }
 
   await next();
