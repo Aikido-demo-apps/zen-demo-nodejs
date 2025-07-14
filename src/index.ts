@@ -156,10 +156,18 @@ app.post('/api/request', async (c) => {
       output: response.data
     })
   } catch (error: any) {
+    // if "Zen has blocked a server-side request forgery" in the error message, return a 500
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.message.includes("getaddrinfo ENOTFOUN")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
     return c.json({
       success: false,
       output: `Error: ${error.message || 'Unknown error'}`
-    }, 500)
+    }, 400)
   }
 })
 
