@@ -118,6 +118,33 @@ app.post('/api/execute', async (c) => {
     }, 500)
   }
 })
+/*
+ @app.route('/api/execute/<command>', methods=['GET'])
+    def execute_command_get(command):
+        result = Helpers.execute_shell_command(command)
+        return result
+*/
+app.get('/api/execute/:command', async (c) => {
+  const command = c.req.param('command');
+  try {
+    const { stdout, stderr } = await execPromise(command)
+    const output = stdout || stderr
+    return c.json({ success: true, output })
+  } catch (error: any) {
+    // if "Zen has blocked a shell injection" in the error message, return a 500
+    if (error.message.includes("Zen has blocked a shell injection")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    }, 200)
+  }
+})
 
 app.post('/api/request', async (c) => {
   try {
