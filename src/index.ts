@@ -171,6 +171,34 @@ app.post('/api/request', async (c) => {
   }
 })
 
+app.post('/api/request2', async (c) => {
+  try {
+    const { url } = await c.req.json()
+    // use fetch to get the url
+    const response = await fetch(url)
+
+    return c.json({
+      success: true,
+      output: await response.text()
+    })
+  } catch (error: any) {
+    // if "Zen has blocked a server-side request forgery" in the error message, return a 500
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.message.includes("getaddrinfo ENOTFOUN")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    }, 400)
+  }
+})
+
+
+
 app.get('/api/read', async (c) => {
   try {
     const filePath = c.req.query('path') || ""
