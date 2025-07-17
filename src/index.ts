@@ -10,6 +10,7 @@ import axios from 'axios'
 import * as path from 'path'
 import { DatabaseHelper, initDatabase, CommandRequest, RequestRequest, CreateRequest } from './database'
 import {RouteTestLLM} from "./llm";
+import {got} from 'got';
 
 const execPromise = promisify(exec)
 
@@ -175,15 +176,15 @@ app.post('/api/request2', async (c) => {
   try {
     const { url } = await c.req.json()
     // use fetch to get the url
-    const response = await fetch(url)
+    const response = await got(url);
 
     return c.json({
       success: true,
-      output: await response.text()
+      output: response.body
     })
   } catch (error: any) {
     // if "Zen has blocked a server-side request forgery" in the error message, return a 500
-    if (error.message.includes("Zen has blocked a server-side request forgery") || error.message.includes("getaddrinfo ENOTFOUN")) {
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.message.includes("getaddrinfo ENOTFOUND")) {
       return c.json({
         success: false,
         output: error.message
