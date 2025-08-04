@@ -38,7 +38,7 @@ export class DatabaseHelper {
   public static createDbPool(): Pool {
     const databaseUrl = process.env.DATABASE_URL;
     if (!databaseUrl) {
-      throw new Error("DATABASE_URL environment variable is required");
+      throw new Error('DATABASE_URL environment variable is required');
     }
 
     // Parse the database URL
@@ -53,7 +53,7 @@ export class DatabaseHelper {
       password: url.auth ? url.auth.split(':')[1] : undefined,
       ssl: false,
       max: 10,
-      min: 1
+      min: 1,
     });
 
     // Create table
@@ -73,7 +73,7 @@ export class DatabaseHelper {
    * Validate input string against regex pattern
    */
   public static isValidInput(inputStr: string): boolean {
-    return Boolean(inputStr.match(DatabaseHelper.REGEX));
+    return DatabaseHelper.REGEX.test(inputStr);
   }
 
   /**
@@ -81,8 +81,10 @@ export class DatabaseHelper {
    */
   public static async clearAll(): Promise<void> {
     try {
-      const result = await this.pool.query("DELETE FROM pets");
-      console.log(`${result.rowCount} pets have been removed from the database.`);
+      const result = await this.pool.query('DELETE FROM pets');
+      console.log(
+        `${result.rowCount} pets have been removed from the database.`,
+      );
     } catch (e) {
       console.log(`Database error occurred: ${e}`);
     }
@@ -94,14 +96,18 @@ export class DatabaseHelper {
   public static async getAllPets(): Promise<any[]> {
     const pets: any[] = [];
     try {
-      const result = await this.pool.query("SELECT * FROM pets");
+      const result = await this.pool.query('SELECT * FROM pets');
 
       for (const row of result.rows) {
         const { pet_id, pet_name, owner } = row;
 
         // Validate input for XSS risks
-        const name = this.isValidInput(pet_name) ? pet_name : "[REDACTED: XSS RISK]";
-        const ownerName = this.isValidInput(owner) ? owner : "[REDACTED: XSS RISK]";
+        const name = this.isValidInput(pet_name)
+          ? pet_name
+          : '[REDACTED: XSS RISK]';
+        const ownerName = this.isValidInput(owner)
+          ? owner
+          : '[REDACTED: XSS RISK]';
 
         pets.push({
           pet_id,
@@ -121,7 +127,10 @@ export class DatabaseHelper {
    */
   public static async getPetById(id: string): Promise<any> {
     try {
-      const result = await this.pool.query("SELECT * FROM pets WHERE pet_id = $1", [id]);
+      const result = await this.pool.query(
+        'SELECT * FROM pets WHERE pet_id = $1',
+        [id],
+      );
       if (result.rows.length > 0) {
         const { pet_id, pet_name, owner } = result.rows[0];
         return {
@@ -135,9 +144,9 @@ export class DatabaseHelper {
     }
 
     return {
-      pet_id: "-1",
-      name: "unknown",
-      owner: "the void",
+      pet_id: '-1',
+      name: 'unknown',
+      owner: 'the void',
     };
   }
 
