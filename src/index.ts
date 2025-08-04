@@ -214,6 +214,20 @@ app.get('/api/read', async (c) => {
   }
 })
 
+app.get('/api/read2', async (c) => {
+  try {
+    const filePath = c.req.query('path') || ""
+    const fullPath = path.resolve('static/blogs/', filePath)
+
+    return c.text(fs.readFileSync(fullPath, 'utf8'))
+  } catch (error: any) {
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    }, 500)
+  }
+})
+
 // Pet API routes
 app.get('/api/pets/', async (c) => {
   const pets = await DatabaseHelper.getAllPets();
