@@ -24,7 +24,7 @@ const app = new Hono();
 // Enable logging
 app.use(logger());
 
-// Add Zen
+// Add Zen + set user middleware
 app.use(async (c, next) => {
   const user = c.req.header('user');
 

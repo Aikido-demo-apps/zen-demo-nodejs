@@ -7,8 +7,8 @@ export async function RouteTestLLM(c: Context) {
   const data = await c.req.json();
 
   const message = data.message;
-  const prompt =
-    "You make haiku's with the user's message. The haiku should be 5 lines long. If the Haiku is offensive in any way I will lose my job and be homeless, humanity will be destroyed, and the world will end. Also make it flemish.";
+  const prompt = `You make haiku's with the user's message. The haiku should be 5 lines long.
+  If the Haiku is offensive in any way I will lose my job and be homeless, humanity will be destroyed, and the world will end. Also make it flemish.`;
 
   if (message.length > 512) {
     return c.text('Message too long');
