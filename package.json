@@ -9,7 +9,6 @@
     "@anthropic-ai/sdk": "^0.56.0",
     "@hono/node-server": "^1.14.0",
     "@mistralai/mistralai": "^1.7.3",
-    "axios": "^1.8.4",
     "got": "^14.4.7",
     "hono": "^4.7.5",
     "openai": "^5.8.2",

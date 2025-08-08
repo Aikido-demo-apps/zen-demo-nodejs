@@ -6,7 +6,6 @@ import fs from 'fs';
 import { exec } from 'child_process'
 import { logger } from 'hono/logger'
 import { promisify } from 'util'
-import axios from 'axios'
 import * as path from 'path'
 import { DatabaseHelper, initDatabase, CommandRequest, RequestRequest, CreateRequest } from './database'
 import {RouteTestLLM} from "./llm";
@@ -129,6 +128,12 @@ app.get('/api/execute/:command', async (c) => {
     return c.json({ success: true, output })
   } catch (error: any) {
     // if "Zen has blocked a shell injection" in the error message, return a 500
+    if (error.cause.includes("Zen has blocked a shell injection")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
     if (error.message.includes("Zen has blocked a shell injection")) {
       return c.json({
         success: false,
@@ -146,11 +151,11 @@ app.get('/api/execute/:command', async (c) => {
 app.post('/api/request', async (c) => {
   try {
     const { url } = await c.req.json()
-    const response = await axios.get(url)
+    const response = await fetch(url)
 
     return c.json({
       success: true,
-      output: response.data
+      output: await response.text()
     })
   } catch (error: any) {
     // if "Zen has blocked a server-side request forgery" in the error message, return a 500
