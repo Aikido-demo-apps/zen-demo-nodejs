@@ -159,16 +159,16 @@ app.post('/api/request', async (c) => {
     })
   } catch (error: any) {
     // if "Zen has blocked a server-side request forgery" in the error message, return a 500
-    if (error.message.includes("Zen has blocked a server-side request forgery") || error.message.includes("getaddrinfo ENOTFOUN")) {
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND") {
       return c.json({
         success: false,
-        output: error.message
+        output: error.message,
       }, 500)
     }
 
     return c.json({
       success: false,
-      output: `Error: ${error.message || 'Unknown error'}`
+      output: `Error: ${error.message || 'Unknown error'}`,
     }, 400)
   }
 })
@@ -185,7 +185,7 @@ app.post('/api/request2', async (c) => {
     })
   } catch (error: any) {
     // if "Zen has blocked a server-side request forgery" in the error message, return a 500
-    if (error.message.includes("Zen has blocked a server-side request forgery") || error.message.includes("getaddrinfo ENOTFOUND")) {
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND") {
       return c.json({
         success: false,
         output: error.message
