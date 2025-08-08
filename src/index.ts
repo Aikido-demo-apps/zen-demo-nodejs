@@ -193,6 +193,33 @@ app.post('/api/request2', async (c) => {
   }
 })
 
+// This route is used to test if the Agent blocks requests to the same domain but on a different port. (Should not be blocked)
+app.post('/api/request_different_port', async (c) => {
+  try {
+    const { url, port } = await c.req.json()
+    // replace the port in the url with the port 
+    const urlWithPort = url.replace(/:\d+/, `:${port}`)
+    const response = await fetch(urlWithPort)
+
+    return c.json({
+      success: true,
+      output: await response.text()
+    })
+  } catch (error: any) {
+    if (error.message.includes("Zen has blocked a server-side request forgery")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    }, 400)
+  }
+})
+
 
 
 app.get('/api/read', async (c) => {
