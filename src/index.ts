@@ -128,12 +128,6 @@ app.get('/api/execute/:command', async (c) => {
     return c.json({ success: true, output })
   } catch (error: any) {
     // if "Zen has blocked a shell injection" in the error message, return a 500
-    if (error.cause.includes("Zen has blocked a shell injection")) {
-      return c.json({
-        success: false,
-        output: error.message
-      }, 500)
-    }
     if (error.message.includes("Zen has blocked a shell injection")) {
       return c.json({
         success: false,
