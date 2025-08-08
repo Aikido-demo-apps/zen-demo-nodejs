@@ -119,12 +119,8 @@ app.post('/api/execute', async (c) => {
     }, 500)
   }
 })
-/*
- @app.route('/api/execute/<command>', methods=['GET'])
-    def execute_command_get(command):
-        result = Helpers.execute_shell_command(command)
-        return result
-*/
+
+
 app.get('/api/execute/:command', async (c) => {
   const command = c.req.param('command');
   try {
