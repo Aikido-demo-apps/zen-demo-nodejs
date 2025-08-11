@@ -153,7 +153,7 @@ app.post('/api/request', async (c) => {
     })
   } catch (error: any) {
     // if "Zen has blocked a server-side request forgery" in the error message, return a 500
-    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND") {
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND" || error.cause.code === "ERR_INVALID_URL") {
       return c.json({
         success: false,
         output: error.message,
@@ -163,6 +163,7 @@ app.post('/api/request', async (c) => {
     return c.json({
       success: false,
       output: `Error: ${error.message || 'Unknown error'}`,
+      cause: error.cause
     }, 400)
   }
 })
@@ -179,7 +180,7 @@ app.post('/api/request2', async (c) => {
     })
   } catch (error: any) {
     // if "Zen has blocked a server-side request forgery" in the error message, return a 500
-    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND") {
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND" || error.cause.code === "ERR_INVALID_URL") {
       return c.json({
         success: false,
         output: error.message
@@ -188,7 +189,8 @@ app.post('/api/request2', async (c) => {
 
     return c.json({
       success: false,
-      output: `Error: ${error.message || 'Unknown error'}`
+      output: `Error: ${error.message || 'Unknown error'}`,
+      cause: error.cause
     }, 400)
   }
 })
