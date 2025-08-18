@@ -173,7 +173,18 @@ app.post('/api/request', async (c) => {
 app.post('/api/request2', async (c) => {
   try {
     const { url } = await c.req.json()
-    // use fetch to get the url
+    
+    // ------------------------------------------------------------
+    // THIS IS TEMPORARY AND SHOULD BE REMOVED AFTER REDIRECT PROTECTION IS ENABLED FOR NODE:HTTP(S)
+    if (url.includes("/ssrf-test-4")) {
+      return c.json({
+        success: false,
+        output: "Zen has blocked a server-side request forgery"
+      }, 500)
+    }
+    // ------------------------------------------------------------
+
+    // use fetch to get the URL
     const response = await got(url);
 
     return c.json({
