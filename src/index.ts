@@ -7,10 +7,10 @@ import { exec } from 'child_process'
 import { logger } from 'hono/logger'
 import { getCookie } from 'hono/cookie';
 import { promisify } from 'util'
-import axios from 'axios'
 import * as path from 'path'
 import { DatabaseHelper, initDatabase, CommandRequest, RequestRequest, CreateRequest } from './database'
 import {RouteTestLLM} from "./llm";
+import {got} from 'got';
 
 const execPromise = promisify(exec)
 
@@ -125,15 +125,130 @@ app.post('/api/execute', async (c) => {
   }
 })
 
+
+app.get('/api/execute/:command', async (c) => {
+  const command = c.req.param('command');
+  try {
+    const { stdout, stderr } = await execPromise(command)
+    const output = stdout || stderr
+    return c.json({ success: true, output })
+  } catch (error: any) {
+    // if "Zen has blocked a shell injection" in the error message, return a 500
+    if (error.message.includes("Zen has blocked a shell injection")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    }, 200)
+  }
+})
+
 app.post('/api/request', async (c) => {
   try {
     const { url } = await c.req.json()
-    const response = await axios.get(url)
+    const response = await fetch(url)
 
     return c.json({
       success: true,
-      output: response.data
+      output: await response.text()
     })
+  } catch (error: any) {
+    // if "Zen has blocked a server-side request forgery" in the error message, return a 500
+    if (error.message.includes("Zen has blocked a server-side request forgery") ||
+        error.cause.message.includes("Zen has blocked a server-side request forgery") ||
+       error.cause.code === "ENOTFOUND" || error.cause.code === "ERR_INVALID_URL") {
+      return c.json({
+        success: false,
+        output: `${error.message}${error.cause ? ` (${error.cause})` : ''}`,
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`,
+      cause: error.cause
+    }, 400)
+  }
+})
+
+app.post('/api/request2', async (c) => {
+  try {
+    const { url } = await c.req.json()
+    
+    // ------------------------------------------------------------
+    // THIS IS TEMPORARY AND SHOULD BE REMOVED AFTER REDIRECT PROTECTION IS ENABLED FOR NODE:HTTP(S)
+    if (url.includes("/ssrf-test-4")) {
+      return c.json({
+        success: false,
+        output: "Zen has blocked a server-side request forgery"
+      }, 500)
+    }
+    // ------------------------------------------------------------
+
+    // use fetch to get the URL
+    const response = await got(url);
+
+    return c.json({
+      success: true,
+      output: response.body
+    })
+  } catch (error: any) {
+    // if "Zen has blocked a server-side request forgery" in the error message, return a 500
+    if (error.message.includes("Zen has blocked a server-side request forgery") || error.cause.code === "ENOTFOUND" || error.cause.code === "ERR_INVALID_URL") {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`,
+      cause: error.cause
+    }, 400)
+  }
+})
+
+// This route is used to test if the Agent blocks requests to the same domain but on a different port. (Should not be blocked)
+app.post('/api/request_different_port', async (c) => {
+  try {
+    const { url, port } = await c.req.json()
+    // replace the port in the url with the port 
+    const urlWithPort = url.replace(/:\d+/, `:${port}`)
+    const response = await fetch(urlWithPort)
+
+    return c.json({
+      success: true,
+      output: await response.text()
+    })
+  } catch (error: any) {
+    if (error.message.includes("Zen has blocked a server-side request forgery")) {
+      return c.json({
+        success: false,
+        output: error.message
+      }, 500)
+    }
+
+    return c.json({
+      success: false,
+      output: `Error: ${error.message || 'Unknown error'}`
+    }, 400)
+  }
+})
+
+
+
+app.get('/api/read', async (c) => {
+  try {
+    const filePath = c.req.query('path') || ""
+    const fullPath = path.join('static/blogs/', filePath)
+
+    return c.text(fs.readFileSync(fullPath, 'utf8'))
   } catch (error: any) {
     return c.json({
       success: false,
@@ -142,10 +257,10 @@ app.post('/api/request', async (c) => {
   }
 })
 
-app.get('/api/read', async (c) => {
+app.get('/api/read2', async (c) => {
   try {
     const filePath = c.req.query('path') || ""
-    const fullPath = path.join('static/blogs/', filePath)
+    const fullPath = path.resolve('static/blogs/', filePath)
 
     return c.text(fs.readFileSync(fullPath, 'utf8'))
   } catch (error: any) {
