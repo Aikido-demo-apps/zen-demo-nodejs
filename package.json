@@ -2,7 +2,8 @@
   "name": "zen-demo-nodejs",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "build:esm": "tsc -p tsconfig.esm.json"
   },
   "dependencies": {
     "@aikidosec/firewall": "^1.7.16-beta.1",

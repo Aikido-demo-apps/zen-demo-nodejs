@@ -17,6 +17,7 @@ node_modules/
 
 # builds
 dist/
+dist-esm/
 
 # logs
 logs/

@@ -2,14 +2,14 @@ import * as Zen from "@aikidosec/firewall"
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
-import fs from 'fs';
-import { exec } from 'child_process'
+import { readFileSync } from 'node:fs';
+import { exec } from 'node:child_process'
 import { logger } from 'hono/logger'
 import { getCookie } from 'hono/cookie';
-import { promisify } from 'util'
-import * as path from 'path'
-import { DatabaseHelper, initDatabase, CommandRequest, RequestRequest, CreateRequest } from './database'
-import {RouteTestLLM} from "./llm";
+import { promisify } from 'node:util'
+import * as path from 'node:path'
+import { DatabaseHelper, initDatabase } from './database.js'
+import {RouteTestLLM} from "./llm.js";
 import {got} from 'got';
 
 const execPromise = promisify(exec)
@@ -75,23 +75,23 @@ Zen.addHonoMiddleware(app);
 
 // Routes
 app.get('/', (c) => {
-  return c.html(fs.readFileSync('static/index.html', 'utf8'));
+  return c.html(readFileSync('static/index.html', 'utf8'));
 })
 
 app.get('/pages/create', (c) => {
-  return c.html(fs.readFileSync('static/create.html', 'utf8'));
+  return c.html(readFileSync('static/create.html', 'utf8'));
 })
 
 app.get('/pages/execute', (c) => {
-  return c.html(fs.readFileSync('static/execute_command.html', 'utf8'));
+  return c.html(readFileSync('static/execute_command.html', 'utf8'));
 })
 
 app.get('/pages/read', (c) => {
-  return c.html(fs.readFileSync('static/read_file.html', 'utf8'));
+  return c.html(readFileSync('static/read_file.html', 'utf8'));
 })
 
 app.get('/pages/request', (c) => {
-  return c.html(fs.readFileSync('static/request.html', 'utf8'));
+  return c.html(readFileSync('static/request.html', 'utf8'));
 })
 
 app.get('/test_ratelimiting_1', (c) => {
@@ -248,7 +248,7 @@ app.get('/api/read', async (c) => {
     const filePath = c.req.query('path') || ""
     const fullPath = path.join('static/blogs/', filePath)
 
-    return c.text(fs.readFileSync(fullPath, 'utf8'))
+    return c.text(readFileSync(fullPath, 'utf8'))
   } catch (error: any) {
     return c.json({
       success: false,
@@ -262,7 +262,7 @@ app.get('/api/read2', async (c) => {
     const filePath = c.req.query('path') || ""
     const fullPath = path.resolve('static/blogs/', filePath)
 
-    return c.text(fs.readFileSync(fullPath, 'utf8'))
+    return c.text(readFileSync(fullPath, 'utf8'))
   } catch (error: any) {
     return c.json({
       success: false,

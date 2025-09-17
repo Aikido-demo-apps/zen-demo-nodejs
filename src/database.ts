@@ -1,30 +1,5 @@
 import { Pool } from 'pg';
-import { parse } from 'url';
-
-// Request classes
-export class CreateRequest {
-  name: string;
-
-  constructor(data: any) {
-    this.name = data.name;
-  }
-}
-
-export class CommandRequest {
-  userCommand: string;
-
-  constructor(data: any) {
-    this.userCommand = data.userCommand;
-  }
-}
-
-export class RequestRequest {
-  url: string;
-
-  constructor(data: any) {
-    this.url = data.url;
-  }
-}
+import { parse } from 'node:url';
 
 export class DatabaseHelper {
   // Regex pattern for input validation - keeping the security vulnerability
