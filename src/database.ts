@@ -1,30 +1,4 @@
 import { Pool } from 'pg';
-import { parse } from 'url';
-
-// Request classes
-export class CreateRequest {
-  name: string;
-
-  constructor(data: any) {
-    this.name = data.name;
-  }
-}
-
-export class CommandRequest {
-  userCommand: string;
-
-  constructor(data: any) {
-    this.userCommand = data.userCommand;
-  }
-}
-
-export class RequestRequest {
-  url: string;
-
-  constructor(data: any) {
-    this.url = data.url;
-  }
-}
 
 export class DatabaseHelper {
   // Regex pattern for input validation - keeping the security vulnerability
@@ -42,15 +16,15 @@ export class DatabaseHelper {
     }
 
     // Parse the database URL
-    const url = parse(databaseUrl);
+    const url = new URL(databaseUrl);
 
     // Create connection pool
     this.pool = new Pool({
       host: url.hostname || undefined,
       port: parseInt(url.port || '5432'),
       database: url.pathname ? url.pathname.substring(1) : undefined,
-      user: url.auth ? url.auth.split(':')[0] : undefined,
-      password: url.auth ? url.auth.split(':')[1] : undefined,
+      user: url.username,
+      password: url.password,
       ssl: false,
       max: 10,
       min: 1
