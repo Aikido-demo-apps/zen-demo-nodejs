@@ -6,7 +6,7 @@
     "build:esm": "tsc -p tsconfig.esm.json"
   },
   "dependencies": {
-    "@aikidosec/firewall": "^1.7.17-beta.1",
+    "@aikidosec/firewall": "^1.7.18-beta.1",
     "@anthropic-ai/sdk": "^0.56.0",
     "@hono/node-server": "^1.14.0",
     "@mistralai/mistralai": "^1.7.3",
