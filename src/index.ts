@@ -241,7 +241,62 @@ app.post('/api/request_different_port', async (c) => {
   }
 })
 
+app.post('/api/stored_ssrf', async (c) => {
+  try {
+    const url = 'http://evil-stored-ssrf-hostname/latest/api/token';
+    const response = await fetch(url);
+    return c.json({
+      success: true,
+      output: await response.text(),
+    });
+  } catch (error: any) {
+    if (
+      error.cause &&
+      error.cause.message.includes(
+        'Zen has blocked a stored server-side request forgery',
+      )
+    ) {
+      return c.json(
+        {
+          success: false,
+          output: error.cause.message,
+        },
+        500,
+      );
+    }
 
+    return c.json(
+      {
+        success: false,
+        output: `Error: ${error.message || 'Unknown error'}`,
+        cause: error.cause,
+      },
+      400,
+    );
+  }
+});
+let urlList: string[] = [];
+
+app.post('/api/stored_ssrf_2', async (c) => {
+  try {
+    // add the url to the url list
+    urlList.push('http://evil-stored-ssrf-hostname/latest/api/token');
+
+    // Return instantly
+    return c.json({
+      success: true,
+      output: 'Request successful (Stored SSRF 2)',
+    });
+  } catch (error: any) {
+    return c.json(
+      {
+        success: false,
+        output: `Error: ${error.message || 'Unknown error'}`,
+      },
+      500,
+    );
+  }
+});
 
 app.get('/api/read', async (c) => {
   try {
@@ -324,3 +379,25 @@ serve({
 }, (info) => {
   console.log(`Server is running on http://localhost:${info.port}`)
 })
+
+
+// Function that performs the requests to the stored SSRF urls
+async function checkUrls() {
+  console.log('Running check at', new Date().toISOString());
+
+  for (const url of urlList) {
+    try {
+      const res = await fetch(url);
+      const text = await res.text();
+      console.log(`Fetched ${url} (status: ${res.status})`);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(`Error fetching ${url}:`, err.message);
+      } else {
+        console.error(`Error fetching ${url}:`, err);
+      }
+    }
+  }
+}
+
+setInterval(checkUrls, 10000);
