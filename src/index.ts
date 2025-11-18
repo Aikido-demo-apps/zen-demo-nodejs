@@ -15,7 +15,7 @@ import {got} from 'got';
 const execPromise = promisify(exec)
 
 const app = new Hono()
-
+let storedSsrfUrlList: string[] = [];
 // Enable logging
 app.use(logger())
 
@@ -275,12 +275,11 @@ app.post('/api/stored_ssrf', async (c) => {
     );
   }
 });
-let urlList: string[] = [];
 
 app.post('/api/stored_ssrf_2', async (c) => {
   try {
-    // add the url to the url list
-    urlList.push('http://evil-stored-ssrf-hostname/latest/api/token');
+    // add the url to the storedSsrfUrlList 
+    storedSsrfUrlList.push('http://evil-stored-ssrf-hostname/latest/api/token');
 
     // Return instantly
     return c.json({
@@ -382,10 +381,11 @@ serve({
 
 
 // Function that performs the requests to the stored SSRF urls
-async function checkUrls() {
+// This function is called every 10 seconds to fetch the urls from the storedSsrfUrlList
+async function checkStoredSsrfUrls() {
   console.log('Running check at', new Date().toISOString());
 
-  for (const url of urlList) {
+  for (const url of storedSsrfUrlList) {
     try {
       const res = await fetch(url);
       const text = await res.text();
@@ -400,4 +400,4 @@ async function checkUrls() {
   }
 }
 
-setInterval(checkUrls, 10000);
+setInterval(checkStoredSsrfUrls, 10000);
