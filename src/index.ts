@@ -400,4 +400,10 @@ async function checkStoredSsrfUrls() {
   }
 }
 
+
+const cleanStoredSsrfUrlsList = () => {
+  storedSsrfUrlList = [];
+}
+
 setInterval(checkStoredSsrfUrls, 10000);
+setInterval(cleanStoredSsrfUrlsList, 60000); // every 60 seconds
