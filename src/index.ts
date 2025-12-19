@@ -15,7 +15,7 @@ import {got} from 'got';
 const execPromise = promisify(exec)
 
 const app = new Hono()
-let storedSsrfUrlList: string[] = [];
+let storedSsrfUrlList = new Set<string>();
 // Enable logging
 app.use(logger())
 
@@ -243,8 +243,17 @@ app.post('/api/request_different_port', async (c) => {
 
 app.post('/api/stored_ssrf', async (c) => {
   try {
-    const url = 'http://evil-stored-ssrf-hostname/latest/api/token';
-    const response = await fetch(url);
+    let { urlIndex } = await c.req.json();
+    if (typeof urlIndex === 'undefined' || urlIndex === null) {
+      urlIndex = 0;
+    }
+    const urls: string[] = [
+      'http://evil-stored-ssrf-hostname/latest/api/token',
+      'http://metadata.google.internal/latest/api/token',
+      'http://metadata.goog/latest/api/token',
+      'http://169.254.169.254/latest/api/token',
+    ];
+    const response = await fetch(urls[urlIndex % urls.length]);
     return c.json({
       success: true,
       output: await response.text(),
@@ -279,7 +288,7 @@ app.post('/api/stored_ssrf', async (c) => {
 app.post('/api/stored_ssrf_2', async (c) => {
   try {
     // add the url to the storedSsrfUrlList 
-    storedSsrfUrlList.push('http://evil-stored-ssrf-hostname/latest/api/token');
+    storedSsrfUrlList.add('http://evil-stored-ssrf-hostname/latest/api/token');
 
     // Return instantly
     return c.json({
@@ -396,6 +405,9 @@ async function checkStoredSsrfUrls() {
       } else {
         console.error(`Error fetching ${url}:`, err);
       }
+    } finally {
+      // remove the url from the storedSsrfUrlList
+      storedSsrfUrlList.delete(url);
     }
   }
 }
