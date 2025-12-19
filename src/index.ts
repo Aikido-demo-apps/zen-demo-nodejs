@@ -243,8 +243,17 @@ app.post('/api/request_different_port', async (c) => {
 
 app.post('/api/stored_ssrf', async (c) => {
   try {
-    const url = 'http://evil-stored-ssrf-hostname/latest/api/token';
-    const response = await fetch(url);
+    let { urlIndex } = await c.req.json();
+    if (typeof urlIndex === 'undefined' || urlIndex === null) {
+      urlIndex = 0;
+    }
+    const urls: string[] = [
+      'http://evil-stored-ssrf-hostname/latest/api/token',
+      'http://metadata.google.internal/latest/api/token',
+      'http://metadata.goog/latest/api/token',
+      'http://169.254.169.254/latest/api/token',
+    ];
+    const response = await fetch(urls[urlIndex % urls.length]);
     return c.json({
       success: true,
       output: await response.text(),
