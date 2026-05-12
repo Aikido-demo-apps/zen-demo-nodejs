@@ -255,6 +255,9 @@ app.post('/api/stored_ssrf', async (c) => {
       'http://metadata.google.internal/latest/api/token',
       'http://metadata.goog/latest/api/token',
       'http://169.254.169.254/latest/api/token',
+      'http://evil-stored-ssrf-hostname./latest/api/token',
+      'http://metadata.google.internal./latest/api/token',
+      'http://metadata.goog./latest/api/token',
     ];
     const response = await fetch(urls[urlIndex % urls.length]);
     return c.json({
