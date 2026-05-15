@@ -9,8 +9,8 @@ import { getCookie } from 'hono/cookie';
 import { promisify } from 'node:util'
 import * as path from 'node:path'
 import { DatabaseHelper, initDatabase } from './database.js'
-import {RouteTestLLM} from "./llm.js";
-import {got} from 'got';
+import { RouteTestLLM } from "./llm.js";
+import { got } from 'got';
 
 const execPromise = promisify(exec)
 
@@ -416,3 +416,11 @@ async function checkStoredSsrfUrls() {
 }
 
 setInterval(checkStoredSsrfUrls, 10000);
+
+async function onShutdown() {
+  await Zen.shutdown();
+  process.exit(process.exitCode || 0);
+}
+
+process.on("SIGTERM", onShutdown);
+process.on("SIGINT", onShutdown);
