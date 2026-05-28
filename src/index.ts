@@ -368,6 +368,26 @@ app.post('/api/create', async (c) => {
   }
 });
 
+app.post('/api/create-form', async (c) => {
+  try {
+    const body = await c.req.parseBody();
+    const name = body['name'] as string;
+
+    if (!name) {
+      return c.text("Invalid request", 400);
+    }
+
+    const rowsCreated = await DatabaseHelper.createPetByName(name);
+    if (rowsCreated === -1) {
+      return c.text("Database error occurred", 500);
+    }
+    return c.text("Success!");
+  } catch (error) {
+    console.error("Error creating pet from form:", error);
+    return c.text("Error processing request", 500);
+  }
+});
+
 app.get('/clear', async (c) => {
   await DatabaseHelper.clearAll();
   return c.text("Cleared successfully.");
