@@ -14,6 +14,11 @@ import { got } from 'got';
 
 const execPromise = promisify(exec)
 
+Zen.enableIdorProtection({
+  tenantColumnName: "tenant_id",
+  excludedTables: [],
+});
+
 const app = new Hono()
 let storedSsrfUrlList = new Set<string>();
 // Enable logging
@@ -42,6 +47,9 @@ app.use(async (c, next) => {
       });
     }
   }
+
+  const tenantId = c.req.header('X-Tenant-ID') || 'default_tenant';
+  Zen.setTenantId(tenantId);
 
   const rateLimitingGroupId = getCookie(c, 'RateLimitingGroupID');
   if (rateLimitingGroupId) {
@@ -340,15 +348,19 @@ app.get('/api/read2', async (c) => {
   }
 })
 
-// Pet API routes
+// Pet API routes (pets table has no tenant_id, bypass IDOR checks)
 app.get('/api/pets/', async (c) => {
-  const pets = await DatabaseHelper.getAllPets();
+  const pets = await Zen.withoutIdorProtection(async () => {
+    return await DatabaseHelper.getAllPets();
+  });
   return c.json(pets);
 });
 
 app.get('/api/pets/:id', async (c) => {
   const id = c.req.param('id');
-  const pet = await DatabaseHelper.getPetById(id);
+  const pet = await Zen.withoutIdorProtection(async () => {
+    return await DatabaseHelper.getPetById(id);
+  });
   return c.json(pet);
 });
 
@@ -356,7 +368,9 @@ app.post('/api/create', async (c) => {
   try {
     const data = await c.req.json();
     const createRequest = { name: data.name };
-    const rowsCreated = await DatabaseHelper.createPetByName(createRequest.name);
+    const rowsCreated = await Zen.withoutIdorProtection(async () => {
+      return await DatabaseHelper.createPetByName(createRequest.name);
+    });
 
     if (rowsCreated === -1) {
       return c.text("Database error occurred", 500);
@@ -389,8 +403,45 @@ app.post('/api/create-form', async (c) => {
 });
 
 app.get('/clear', async (c) => {
-  await DatabaseHelper.clearAll();
+  await Zen.withoutIdorProtection(async () => {
+    return await DatabaseHelper.clearAll();
+  });
   return c.text("Cleared successfully.");
+});
+
+// IDOR test routes (orders table has tenant_id)
+
+// 1. Safe: query filters on tenant_id correctly
+app.get('/api/idor/safe', async (c) => {
+  try {
+    const tenantId = c.req.header('X-Tenant-ID') || 'default_tenant';
+    const orders = await DatabaseHelper.getOrdersByTenant(tenantId);
+    return c.json({ success: true, orders });
+  } catch (error: any) {
+    return c.json({ success: false, output: error.message }, 500);
+  }
+});
+
+// 2. Unsafe: query missing tenant_id filter — Zen should throw
+app.get('/api/idor/unsafe', async (c) => {
+  try {
+    const orders = await DatabaseHelper.getAllOrdersUnsafe();
+    return c.json({ success: true, orders });
+  } catch (error: any) {
+    return c.json({ success: false, output: error.message }, 500);
+  }
+});
+
+// 3. Bypassed: query missing tenant_id filter but wrapped in withoutIdorProtection
+app.get('/api/idor/bypassed', async (c) => {
+  try {
+    const orders = await Zen.withoutIdorProtection(async () => {
+      return await DatabaseHelper.getAllOrdersUnsafe();
+    });
+    return c.json({ success: true, orders });
+  } catch (error: any) {
+    return c.json({ success: false, output: error.message }, 500);
+  }
 });
 
 app.post('/test_llm', RouteTestLLM);
@@ -398,9 +449,10 @@ app.post('/test_llm', RouteTestLLM);
 // Static files
 app.use('*', serveStatic({ root: './static/public' }));
 
-// Initialize database
+// Initialize database and seed IDOR test data
 try {
   initDatabase(app);
+  DatabaseHelper.seedOrders();
   console.log('Database initialized successfully');
 } catch (error) {
   console.error('Failed to initialize database:', error);
