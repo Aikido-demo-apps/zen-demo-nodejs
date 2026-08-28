@@ -32,7 +32,7 @@ export async function RouteTestLLM(c: Context) {
                     { role: 'assistant', content: prompt },
                     { role: 'user', content: message }
                 ],
-                model: 'claude-3-5-haiku-latest',
+                model: 'claude-haiku-4-5',
             });
             response = anthropic_request.content.filter(content => content.type === 'text').map(content => content.text).join('');
             break;
