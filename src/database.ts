@@ -30,7 +30,7 @@ export class DatabaseHelper {
       min: 1
     });
 
-    // Create table
+    // Create tables
     this.pool.query(`
       CREATE TABLE IF NOT EXISTS public.pets
       (
@@ -113,6 +113,58 @@ export class DatabaseHelper {
       name: "unknown",
       owner: "the void",
     };
+  }
+
+  /**
+   * Get orders filtered by tenant_id (IDOR-safe)
+   */
+  public static async getOrdersByTenant(tenantId: string): Promise<any[]> {
+    try {
+      const result = await this.pool.query(
+        "SELECT * FROM orders WHERE tenant_id = $1",
+        [tenantId]
+      );
+      return result.rows;
+    } catch (e) {
+      console.log(`Database error occurred: ${e}`);
+      return [];
+    }
+  }
+
+  /**
+   * Get all orders WITHOUT tenant_id filter (IDOR-unsafe).
+   * Deliberately does not catch errors so Zen's IDOR violation propagates.
+   */
+  public static async getAllOrdersUnsafe(): Promise<any[]> {
+    const result = await this.pool.query("SELECT * FROM orders");
+    return result.rows;
+  }
+
+  /**
+   * Seed sample orders for IDOR testing
+   */
+  public static async seedOrders(): Promise<void> {
+    try {
+      await this.pool.query(`
+        CREATE TABLE IF NOT EXISTS public.orders
+        (
+          order_id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          tenant_id VARCHAR(255) NOT NULL
+        )
+      `);
+
+      const count = await this.pool.query("SELECT count(*) FROM orders");
+      if (parseInt(count.rows[0].count) > 0) return;
+
+      await this.pool.query(
+        "INSERT INTO orders (name, tenant_id) VALUES ($1, $2), ($3, $4), ($5, $6)",
+        ["Widget", "tenant_1", "Gadget", "tenant_1", "Gizmo", "tenant_2"]
+      );
+      console.log("Seeded sample orders for IDOR testing");
+    } catch (e) {
+      console.log(`Database error occurred: ${e}`);
+    }
   }
 
   /**
