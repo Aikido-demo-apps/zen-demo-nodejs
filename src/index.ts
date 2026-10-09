@@ -110,6 +110,18 @@ app.get('/test_user_blocking', (c) => {
   return c.text("Hello User with id: " + c.req.header('user'))
 })
 
+app.get('/api/custom-event', (c) => {
+  Zen.track('user.login_failed');
+  return c.text('Event tracked');
+})
+
+app.get('/api/custom-event-limit', (c) => {
+  for (let index = 0; index < 100; index++) {
+    Zen.track(`custom-event-${index}`);
+  }
+  return c.text('Events tracked');
+})
+
 app.post('/api/execute', async (c) => {
   try {
     const { userCommand } = await c.req.json()
