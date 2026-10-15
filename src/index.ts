@@ -111,13 +111,13 @@ app.get('/test_user_blocking', (c) => {
 })
 
 app.get('/api/custom-event', (c) => {
-  Zen.track('user.login_failed');
-  return c.text('Event tracked');
-})
+  const count = Number(c.req.query('count') ?? 1);
+  if (!Number.isInteger(count) || count < 1 || count > 100) {
+    return c.text('count must be an integer between 1 and 100', 400);
+  }
 
-app.get('/api/custom-event-limit', (c) => {
-  for (let index = 0; index < 100; index++) {
-    Zen.track(`custom-event-${index}`);
+  for (let index = 0; index < count; index++) {
+    Zen.track('user.login_failed');
   }
   return c.text('Events tracked');
 })
