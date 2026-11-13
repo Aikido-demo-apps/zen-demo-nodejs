@@ -18,7 +18,8 @@ export async function RouteTestLLM(c: Context) {
         case 'openai':
             const openai_client = new OpenAI();
             const openai_request = await openai_client.responses.create({
-                model: "gpt-3.5-turbo",
+                model: "gpt-6-luna",
+                reasoning: { effort: "none" },
                 instructions: prompt,
                 input: message,
             });
