@@ -12,8 +12,8 @@
     "@mistralai/mistralai": "^1.7.3",
     "got": "^14.4.7",
     "hono": "^4.12.27",
-    "openai": "^6.0.0",
-    "pg": "^8.14.1"
+    "openai": "^7.6.0",
+    "pg": "^8.21.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
